@@ -1,0 +1,19 @@
+<div ng-controller="ChatCtrl">
+	<ul id="messageList" ng-if="ready">
+		<li ng-repeat="message in messages">
+			<div ng-if="message.name === user.name"><strong>{{message.name}}:</strong> {{message.value}}</div>
+			<div ng-if="message.name !== user.name">{{message.name}}: {{message.value}}</div>
+		</li>
+	</ul>
+	<p ng-if="!ready">Knocking to get into Room</p>
+	<footer class="footer" id="inputFooter">
+		<div class="col-md-6" ng-controller="DefaultCtrl">
+		  <form class="input-group" ng-submit="sendMessage()">
+		    <input type="text" class="form-control" ng-model="user.message" placeholder="Type Message..." ng-disabled="!ready"/>
+		    <span class="input-group-btn">
+		      <button type="button" class="btn btn-default" ng-click="sendMessage()"><i class="glyphicon glyphicon-send"></i></button>
+		    </span>
+		  </form>
+		</div>
+	</footer>
+</div>
