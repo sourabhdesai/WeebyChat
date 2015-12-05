@@ -7,6 +7,7 @@ var Room = function (name, io) {
 	this.messages = [];
 	this.members = {};
 	this.io = io;
+	this.nameCounter = 1;
 
 	// gives list of member names
 	Room.prototype.getMembers = function () {
@@ -26,6 +27,8 @@ var Room = function (name, io) {
 		}
 	};
 
+	// given membername and socket to the member,
+	// will initialize socket for member and add them to room
 	Room.prototype.addMember = function (memberName, socket) {
 		socket.join(this.name);
 
@@ -45,7 +48,7 @@ var Room = function (name, io) {
 		});
 
 		socket.on('message', msg => {
-			msg.stamp = _.size(this.messages);
+			msg.stamp = _.size(this.messages); // stamp is used to order the messages on client side
 			this.messages.push(msg);
 			this.io.to(this.name).emit('message', msg);
 		});
@@ -58,7 +61,7 @@ var Room = function (name, io) {
 	};
 
 	Room.prototype.generateMemberName = function () {
-		return 'Guest-' + _.size(this.members);
+		return `Guest-${this.nameCounter++}`;
 	};
 };
 

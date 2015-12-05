@@ -1,8 +1,9 @@
 <div ng-controller="ChatCtrl">
 	<ul id="messageList" ng-if="ready">
 		<li ng-repeat="message in messages">
-			<div ng-if="message.name === user.name"><strong>{{message.name}}:</strong> {{message.value}}</div>
-			<div ng-if="message.name !== user.name">{{message.name}}: {{message.value}}</div>
+			<div ng-if="message.type === 'msg' && message.name === user.name"><strong>{{message.name}}:</strong> {{message.value}}</div>
+			<div ng-if="message.type === 'msg'  && message.name !== user.name">{{message.name}}: {{message.value}}</div>
+			<div ng-if="message.type === 'departure'"><i>{{message.name}} has left the room</i></div>
 		</li>
 	</ul>
 	<p ng-if="!ready">Knocking to get into Room</p>

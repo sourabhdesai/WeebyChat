@@ -15,7 +15,7 @@ angular.module('weebyChatApp')
     $scope.messages = [];
 
     // Called once the users username has been resolved
-  	$scope.setDefaults = username => {
+  	$scope.setUsername = username => {
 	    $scope.user = {
 	    	'name': username,
 	    	'message': '' // initially no message has been typed by user
@@ -24,30 +24,45 @@ angular.module('weebyChatApp')
 	    $scope.ready = true;
   	};
 
+    function addToMessageList(message) {
+		$scope.messages.push(message);
+		// Filter duplicate messages and sort them by stamp ordering
+		_.unique($scope.messages, 'stamp');
+		_.sortBy($scope.messages, 'stamp');
+		$scope.$digest();
+    }
+
     var socket = io({
     	'query': 'room=' + $scope.roomname
     });
     
     socket.on('connect', function () {
-    	socket.on('username', username => {
-    		$scope.setDefaults(username);
-    		$scope.$digest();
-    	});
-
-    	socket.on('message', function (message) {
-    		console.log(`got message ${JSON.stringify(message)}`);
-    		$scope.messages.push(message);
-    		_.sortBy($scope.messages, 'stamp');
-    		$scope.$digest();
-    	});
     });
 
+	socket.on('username', username => {
+		$scope.setUsername(username);
+		$scope.$digest();
+	});
+
+	socket.on('message', message => {
+		message.type = 'msg';
+		addToMessageList(message);
+	});
+
+	socket.on('departure', message => {
+		message.type = 'departure';
+		addToMessageList(message);
+	});
+
     $scope.sendMessage = () => {
+    	// Emit the message via the socket
     	if ($scope.ready) {
 	    	socket.emit('message', {
 	    		'name': $scope.user.name,
 	    		'value': $scope.user.message
 	    	});
+
+	    	$scope.user.message = '';
     	}
     };
   });

@@ -7,7 +7,6 @@ module.exports = function (server) {
 
 	io.on('connection', function (socket) {
 	  var roomName = socket.handshake['query']['room'];
-	  console.log(`roomName ${roomName}`);
 	  var room = rooms.getRoom(roomName, io);
 	  
 	  var memberName = room.generateMemberName();
